@@ -6,6 +6,123 @@
 	"output": {
 		"abi": [
 			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_title",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_author",
+						"type": "string"
+					}
+				],
+				"name": "addBook",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_origin",
+						"type": "string"
+					}
+				],
+				"name": "addFruit",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_percent",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_category",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_brand",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					}
+				],
+				"name": "addLiquor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_percent",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_category",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_brand",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					}
+				],
+				"name": "addMyLiquor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "string",
@@ -43,6 +160,88 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "books",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "title",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "author",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "fruits",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "origin",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "liquors",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "percent",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "category",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "brand",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "myBytes32",
 				"outputs": [
@@ -63,6 +262,45 @@
 						"internalType": "int256",
 						"name": "",
 						"type": "int256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "myLiquors",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "percent",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "category",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "brand",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
 					}
 				],
 				"stateMutability": "view",
@@ -237,11 +475,11 @@
 	},
 	"sources": {
 		"contracts/MyContract.sol": {
-			"keccak256": "0xea02c61f60a4ecb7cc12420d27baba5ac9df99dcb62233ebc14422d8a7e78128",
+			"keccak256": "0x614e881d48e684416d58f8ce26123d0cb8431405f16b7f4cde53a3c0449ba804",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f684b7bfcc6e9756c74cab2ae95cc31bbdd8d151c2649192c75458bf6d76ec1b",
-				"dweb:/ipfs/QmYiMSmqT4KVXpE5KXRT9TXCwnCvZS1628VRbAgmqwJGrv"
+				"bzz-raw://7d6777a991d4c055d31a8429a0196c2182e412f87cf813eef79781353be6a78e",
+				"dweb:/ipfs/QmQevt5YEPic3axRgt9JFqGdtPYmAcTcmue4KNh4xYf7JU"
 			]
 		}
 	},
