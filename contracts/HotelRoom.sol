@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 contract HotelRoom {
-    enum Statuses { Vacant, Occupied}
-    Statuses currentStatus;
+    enum Statuses { Vacant, Occupied }
+    Statuses public currentStatus;
 
     event Occupy(address _occupant, uint _value);
 
@@ -27,9 +27,11 @@ contract HotelRoom {
     }
     // Pay owner, and book the room.
     function bookRoom() payable onlyWhileVacant costs(2 ether) public {
-        owner.transfer(msg.value);
         currentStatus = Statuses.Occupied;
 
+        //owner.transfer(msg.value);
+        (bool sent, bytes memory data) = owner.call{value: msg.value}("");
+        require(sent, "Failed to send data");
         // Call the event made at the top
         // An alert when someone books, and see log of all bookings.
         emit Occupy(msg.sender, msg.value);
