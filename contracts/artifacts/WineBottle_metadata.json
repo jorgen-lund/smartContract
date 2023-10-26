@@ -1,0 +1,103 @@
+{
+	"compiler": {
+		"version": "0.8.18+commit.87f61d96"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "_value",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_renter",
+						"type": "address"
+					}
+				],
+				"name": "buyGlass",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "pourGlass",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "statuses",
+				"outputs": [
+					{
+						"internalType": "enum WineBottle.Statuses",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "wineLeft",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/WineBottle.sol": "WineBottle"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/WineBottle.sol": {
+			"keccak256": "0xa700294150db1bd40b6d010ec6721f02f22f706863b60d800244eb8200fb0f25",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://564080c4ff938a338d1c60256ffbc948e28f7154de2e7cc792b8891dc7e0ec0c",
+				"dweb:/ipfs/QmaqprHbhd7KVcM4vPd2d4YBjtG2gqko155QXYeyZMoqZG"
+			]
+		}
+	},
+	"version": 1
+}
