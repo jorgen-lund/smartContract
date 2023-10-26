@@ -7,12 +7,7 @@
 		"abi": [
 			{
 				"inputs": [],
-				"stateMutability": "nonpayable",
-				"type": "constructor"
-			},
-			{
-				"inputs": [],
-				"name": "getCount",
+				"name": "count",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -59,11 +54,11 @@
 	},
 	"sources": {
 		"contracts/Counter.sol": {
-			"keccak256": "0x38179fec1bd04d75ad433a50c85c6a67367be88d7ffc42d71146579eac857435",
+			"keccak256": "0x4447ae0d51021c7a7a636e1509d8c46d49e93bcf8a5baa4740fa759e3d8892c1",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://aeb8e405dcf88102f704ca9d8c5493eeefda03ee2640a2c76a229cab3a1371bc",
-				"dweb:/ipfs/QmW6rVtcv3QyTRKuP3T14wnQwny6ngKncrLnzhubGtWEnQ"
+				"bzz-raw://2f24f1cd3b187680dea817db1d2e5673fd8bc7da4147cdf13de1ad06de42d263",
+				"dweb:/ipfs/Qmf6n2uB8j32zzaoBJmPBem2k4VYnBSj7Bbqxfn5HW7ejE"
 			]
 		}
 	},
