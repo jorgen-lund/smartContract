@@ -26,11 +26,24 @@ contract MyContract {
 
     MyStruct public myStruct = MyStruct(1, "Hello world!");
 
+    // Arrays 
+    uint[] public uintArray = [1, 2, 3];
+    string[] public stringArray = ["John", "Johnny", "Johnson"];
+    string[] public values;
+    //2d array
+    uint256[][] public array2D = [[1, 2, 3], [4, 5, 6]];
 
-    //Local Variables
-    // Exist inside functions
-    function getValue() public pure returns (uint) {
-        uint value = 1;
-        return value;
+
+    //memory: It tells us where the data is stored. Solidity has three places where 
+    // it can store data – storage, memory, and stack. In this case, memory means that _value 
+    // is a temporary variable, and it will not persist across function calls.
+    //_value: This is the name of the parameter. The underscore (_) prefix is a common 
+    // convention in Solidity to differentiate between function parameters and global variables.
+    function addValue(string memory _value) public {
+        values.push(_value);
+    }
+
+    function valueCount() public view returns(uint) {
+        return values.length;
     }
 }
