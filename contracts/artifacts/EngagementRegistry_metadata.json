@@ -1,0 +1,193 @@
+{
+	"compiler": {
+		"version": "0.8.22+commit.4fc1097e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "spouse1",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "spouse2",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "weddingDate",
+						"type": "uint256"
+					}
+				],
+				"name": "EngagementRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "caller",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "revokedDate",
+						"type": "uint256"
+					}
+				],
+				"name": "EngagementRevoked",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "engagements",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "spouse1",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "spouse2",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "weddingDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isEngaged",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isRevoked",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_spouse",
+						"type": "address"
+					}
+				],
+				"name": "getEngagementInfo",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_spouse",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_weddingDate",
+						"type": "uint256"
+					}
+				],
+				"name": "registerEngagement",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "revokeEngagement",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Wedding.sol": "EngagementRegistry"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Wedding.sol": {
+			"keccak256": "0xfe1580a293698cf45050aa5c5315d3843e189f07bcdcc5d6fcce9975c0e10d5b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b595977549fb3b62db2dd65f1a74f6e3417611e5f9c71f31aca202711ceb0205",
+				"dweb:/ipfs/QmZ1zZ8iEiVqN1XqTDeLZSYi6NQnLkzBB49EvDFh8rGoiB"
+			]
+		}
+	},
+	"version": 1
+}

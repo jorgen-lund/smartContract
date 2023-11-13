@@ -1,0 +1,116 @@
+{
+	"compiler": {
+		"version": "0.8.18+commit.87f61d96"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "_value",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_renter",
+						"type": "address"
+					}
+				],
+				"name": "bookSeat",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "currentStatus",
+				"outputs": [
+					{
+						"internalType": "enum CarSharing.Statuses",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address payable",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "payForSeat",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "seatsLeft",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/CarSharing.sol": "CarSharing"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/CarSharing.sol": {
+			"keccak256": "0xa467bd5906cfd9c9794a5c2d864a68a1f1881569de2e610a42f515a0eff84e27",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://71e24ca72850aea7c236fbf26cf1a1b01488f2d457cd43b4037fcbd6df3c5197",
+				"dweb:/ipfs/QmPxHzL3zVwsoFBxkB4DSx2viq9BprpRRMVSfzgyKrkLKo"
+			]
+		}
+	},
+	"version": 1
+}
