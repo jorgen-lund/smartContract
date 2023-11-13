@@ -18,7 +18,7 @@ contract EngagementRegistry {
     modifier notEngaged(address _spouse1, address _spouse2) {
         require(
             engagements[_spouse1].isEngaged == false && engagements[_spouse2].isEngaged == false,
-            "Oopsie, one of the parts are already engaged!!"
+            "Oopsie, one of the parts are already engaged!"
         );
         _;
     }
@@ -33,8 +33,14 @@ contract EngagementRegistry {
         _;
     }
 
-    function registerEngagement(address _spouse, uint256 _weddingDate) external notEngaged(msg.sender, _spouse) {
-        engagements[msg.sender] = Engagement({
+    modifier futureDate(uint _date) {
+        require(_date > block.timestamp, "Date must be in the future");
+        _;
+
+    }
+
+    function registerEngagement(address _spouse, uint256 _weddingDate) external notEngaged(msg.sender, _spouse) futureDate(_weddingDate){
+        Engagement memory engagement = Engagement({
             spouse1: msg.sender,
             spouse2: _spouse,
             weddingDate: _weddingDate,
@@ -42,19 +48,16 @@ contract EngagementRegistry {
             isRevoked: false
         });
 
-        engagements[_spouse] = Engagement({
-            spouse1: msg.sender,
-            spouse2: _spouse,
-            weddingDate: _weddingDate,
-            isEngaged: true,
-            isRevoked: false
-        });
+        engagements[msg.sender] = engagement;
+        engagements[_spouse] = engagement;
 
         emit EngagementRegistered(msg.sender, _spouse, _weddingDate);
     }
 
     function revokeEngagement() external onlyEngaged(msg.sender) notRevoked(msg.sender) {
         Engagement storage engagement = engagements[msg.sender];
+
+        require(block.timestamp < engagement.weddingDate, "Revoking the engagement must happen before the wedding date");
 
         delete engagements[engagement.spouse1];
         delete engagements[engagement.spouse2];

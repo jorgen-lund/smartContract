@@ -181,11 +181,11 @@
 	},
 	"sources": {
 		"contracts/Wedding.sol": {
-			"keccak256": "0xfe1580a293698cf45050aa5c5315d3843e189f07bcdcc5d6fcce9975c0e10d5b",
+			"keccak256": "0x919d2738c6c96d629467d9c351d8c36659da2a710893786b6e3e4865e3e69a10",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b595977549fb3b62db2dd65f1a74f6e3417611e5f9c71f31aca202711ceb0205",
-				"dweb:/ipfs/QmZ1zZ8iEiVqN1XqTDeLZSYi6NQnLkzBB49EvDFh8rGoiB"
+				"bzz-raw://83bd6ec06710229141ecab6fcb941284d6a03192bccabaa78ea4c1fd7182ed9a",
+				"dweb:/ipfs/QmbK7UYDESJFtTe6CmBG8tHVTyghUWoJsswSHGQ7MrL2qA"
 			]
 		}
 	},
