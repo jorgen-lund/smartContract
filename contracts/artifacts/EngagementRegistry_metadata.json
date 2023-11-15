@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.22+commit.4fc1097e"
+		"version": "0.8.21+commit.d9974bed"
 	},
 	"language": "Solidity",
 	"output": {
@@ -50,6 +50,109 @@
 				"type": "event"
 			},
 			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "spouse",
+						"type": "address"
+					}
+				],
+				"name": "GuestListConfirmed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "spouse",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address[]",
+						"name": "guests",
+						"type": "address[]"
+					}
+				],
+				"name": "GuestListProposed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "guest",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "spouse",
+						"type": "address"
+					}
+				],
+				"name": "GuestVotedAgainst",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "spouse1",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "spouse2",
+						"type": "address"
+					}
+				],
+				"name": "MarriageConfirmed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "spouse",
+						"type": "address"
+					}
+				],
+				"name": "WeddingInvalidated",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_spouse",
+						"type": "address"
+					}
+				],
+				"name": "checkAndInvalidateWedding",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "confirmGuestList",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -82,6 +185,21 @@
 					{
 						"internalType": "bool",
 						"name": "isRevoked",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isMarried",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "spouse1ConfirmedMarriage",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "spouse2ConfirmedMarriage",
 						"type": "bool"
 					}
 				],
@@ -131,6 +249,55 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "guestLists",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "spouse1Confirmed",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "spouse2Confirmed",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "votesAgainst",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "marry",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "_guests",
+						"type": "address[]"
+					}
+				],
+				"name": "proposeGuestList",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "_spouse",
 						"type": "address"
 					},
@@ -148,6 +315,19 @@
 			{
 				"inputs": [],
 				"name": "revokeEngagement",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_spouse",
+						"type": "address"
+					}
+				],
+				"name": "voteAgainstWedding",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -181,11 +361,11 @@
 	},
 	"sources": {
 		"contracts/Wedding.sol": {
-			"keccak256": "0x919d2738c6c96d629467d9c351d8c36659da2a710893786b6e3e4865e3e69a10",
+			"keccak256": "0x81d15fe31299879767d72cd15006a8dbda7a6460bf1fdb1bf8abc349f11250d7",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://83bd6ec06710229141ecab6fcb941284d6a03192bccabaa78ea4c1fd7182ed9a",
-				"dweb:/ipfs/QmbK7UYDESJFtTe6CmBG8tHVTyghUWoJsswSHGQ7MrL2qA"
+				"bzz-raw://01871190041c526f2cb60f523bffb0b3dd1de58a35680ea5adc3c617230c2345",
+				"dweb:/ipfs/QmPs4GE4Xc1qYZH1CwYdzmRW4HR7GL3NRqCLeHBimniy6U"
 			]
 		}
 	},
