@@ -133,19 +133,6 @@
 				"type": "event"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_spouse",
-						"type": "address"
-					}
-				],
-				"name": "checkAndInvalidateWedding",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"inputs": [],
 				"name": "confirmGuestList",
 				"outputs": [],
@@ -249,6 +236,25 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "_spouse",
+						"type": "address"
+					}
+				],
+				"name": "getGuestList",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "",
 						"type": "address"
 					}
@@ -269,6 +275,30 @@
 						"internalType": "uint256",
 						"name": "votesAgainst",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_spouse",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_guest",
+						"type": "address"
+					}
+				],
+				"name": "isGuestConfirmed",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -361,11 +391,11 @@
 	},
 	"sources": {
 		"contracts/Wedding.sol": {
-			"keccak256": "0x81d15fe31299879767d72cd15006a8dbda7a6460bf1fdb1bf8abc349f11250d7",
+			"keccak256": "0x602209e4f71c2cf4d00884b183f78831a742deacd2eadc3dc1033e1f097f1573",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://01871190041c526f2cb60f523bffb0b3dd1de58a35680ea5adc3c617230c2345",
-				"dweb:/ipfs/QmPs4GE4Xc1qYZH1CwYdzmRW4HR7GL3NRqCLeHBimniy6U"
+				"bzz-raw://307db2a6bc9fdeb51635c4ff772128e484c2563077e2d4f07134cd94eb59ce2e",
+				"dweb:/ipfs/QmWBBhkw47t7x5JWMtdmUrfLUqPX6W9HGbXMgXQ8sJQsky"
 			]
 		}
 	},
