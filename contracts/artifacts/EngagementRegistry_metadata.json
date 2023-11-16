@@ -558,64 +558,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_spouse",
-						"type": "address"
-					}
-				],
-				"name": "getEngagementInfo",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					},
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					},
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_spouse",
-						"type": "address"
-					}
-				],
-				"name": "getGuestList",
-				"outputs": [
-					{
-						"internalType": "address[]",
-						"name": "",
-						"type": "address[]"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
 						"name": "",
 						"type": "address"
 					}
@@ -1173,7 +1115,7 @@
 		},
 		"optimizer": {
 			"enabled": true,
-			"runs": 100
+			"runs": 0
 		},
 		"remappings": []
 	},
@@ -1283,11 +1225,11 @@
 			]
 		},
 		"contracts/WeddingWithSC.sol": {
-			"keccak256": "0x27945991e0b1c65cffc6b9e8400bb6001726048640ea8724741bb0b18114b4a2",
+			"keccak256": "0x030c56cb2ffa781bcb745ebf96860a71c146dd9761156181b34adc9e0c4eaae6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://93e5082429a518909abd1f38fb2c2d36b3e0a0821997225fe032939af9fe78c0",
-				"dweb:/ipfs/QmeqhGoY2AcVrL55WphZa1E42dD7KJzfveDRXyHcyz4ajS"
+				"bzz-raw://34f9813f05965336aa1cc92c6fe2f4acc70388f5d0ceb62b1b7af5f18c7c2644",
+				"dweb:/ipfs/QmTehRpZXZS9pAoGXPcM9BkNfGqXf3BFZkWydsFgHpY8zt"
 			]
 		}
 	},

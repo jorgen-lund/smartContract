@@ -132,8 +132,6 @@ contract EngagementRegistry is ERC721Enumerable {
         authorisedAccount = (0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C);
     }
 
-
-
 //ENGAGEMENT (TASK 1)
 
     // Registers an engagement between the caller (proposer) and the proposee.
@@ -208,14 +206,14 @@ contract EngagementRegistry is ERC721Enumerable {
 
     // Internal function to get the key for accessing the guest list in the mapping.
     // The key is the address of spouse1 in the engagement.
-    function getGuestListKey(address _spouse) isEngagedParty(_spouse) internal view returns (address) {
+    function getGuestListKey(address _spouse) internal view returns (address) {
         Engagement memory engagement = engagements[_spouse];
         return engagement.spouse1.spouseAddress;
     }
 
 
     // Checks if a particular guest is confirmed for the wedding of a given spouse.
-    function isGuestConfirmed(address _spouse, address _guest) isEngagedParty(_spouse) public view returns (bool) {
+    function isGuestConfirmed(address _spouse, address _guest) public view returns (bool) {
         // Retrieve the key to access the correct guest list.
         address guestListKey = getGuestListKey(_spouse);
 
@@ -238,7 +236,7 @@ contract EngagementRegistry is ERC721Enumerable {
 // REVOKE ENGAGEMENT (PART 3)
 
     // Allows an engaged party to revoke their engagement.
-    function revokeEngagement() external isEngagedParty(msg.sender) isNotRevoked(msg.sender) {
+    function revokeEngagement() external isNotRevoked(msg.sender) {
         // Retrieve the engagement details.
         Engagement storage engagement = engagements[msg.sender];
 
@@ -326,14 +324,16 @@ contract EngagementRegistry is ERC721Enumerable {
 
     // Allows a confirmed guest to vote against the wedding of an engaged couple.
     function voteAgainstWedding(address _spouse) external 
-        isEngagedParty(_spouse)
         isNotRevoked(_spouse) 
         isNotMarried(_spouse)
+        isEngaged(_spouse)
         isConfirmedGuest(_spouse) // Ensure the caller is a confirmed guest for the wedding.
         hasNotVoted(_spouse) // Ensure the caller has not already voted.
     {
-        // Access the guest list for the specified spouse.
-        GuestList storage guestList = guestLists[_spouse];
+        address guestListKey = getGuestListKey(_spouse);
+
+        // Access the guest list using the key.
+        GuestList storage guestList = guestLists[guestListKey];
 
         // Record the vote against the wedding.
         guestList.hasVotedAgainst[msg.sender] = true;
@@ -348,11 +348,10 @@ contract EngagementRegistry is ERC721Enumerable {
 
     // Internal function to check if the wedding should be invalidated based on votes.
     function _checkAndInvalidateWedding(address _spouse) internal 
-        isEngagedParty(_spouse)
-        isNotMarried(_spouse) 
     {
-        // Access the guest list for the specified spouse.
-        GuestList storage guestList = guestLists[_spouse];
+        address guestListKey = getGuestListKey(_spouse);
+        GuestList storage guestList = guestLists[guestListKey];
+
         // Retrieve the engagement details.
         Engagement storage engagement = engagements[_spouse];
 
@@ -375,22 +374,6 @@ contract EngagementRegistry is ERC721Enumerable {
 
 
 // GETTERS FOR DEBUG
-    function getGuestList(address _spouse) external view returns (address[] memory) {
-        address guestListKey = getGuestListKey(_spouse);
-        return guestLists[guestListKey].proposedGuests;
-    }
-
-    function getEngagementInfo(address _spouse) external view returns (address, address, uint256, bool, bool) {
-        Engagement memory engagement = engagements[_spouse];
-        return (
-            engagement.spouse1.spouseAddress,
-            engagement.spouse2.spouseAddress,
-            engagement.weddingDate,
-            engagement.isRevoked,
-            engagement.spouse1.isEngaged && engagement.spouse2.isEngaged
-        );
-    }
-
     function getCurrentTime() external view returns (uint256){
         uint256 currentTime = block.timestamp;
         return currentTime;
