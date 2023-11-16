@@ -138,39 +138,32 @@ contract EngagementRegistry is ERC721Enumerable {
 
     // Registers an engagement between the caller (proposer) and the proposee.
     // The function takes the address of the proposee and the proposed wedding date as parameters.
-    function registerEngagement(address _proposeeAddress, uint256 _weddingDate) external 
+        function registerEngagement(address _proposeeAddress, uint256 _weddingDate) external 
         notSameAddress(_proposeeAddress)
         notEngaged(_proposeeAddress)
     {
-        // Create a Spouse struct for the proposer and set their engagement status.
-        spouses[msg.sender] = Spouse({
-            spouseAddress: msg.sender, 
-            isEngaged: true,
-            isMarried: false
+        // Create Spouse structs for the proposer and proposee and set their engagement status.
+        spouses[msg.sender] = Spouse({spouseAddress: msg.sender, isEngaged: true, isMarried: false});
+        spouses[_proposeeAddress] = Spouse({spouseAddress: _proposeeAddress, isEngaged: true, isMarried: false});
+
+        // Create an Engagement struct and assign it to both spouses.
+        Engagement memory newEngagement = Engagement({
+            spouse1: spouses[msg.sender],
+            spouse2: spouses[_proposeeAddress],
+            weddingDate: _weddingDate,
+            isRevoked: false,
+            spouse1ConfirmedMarriage: false,
+            spouse2ConfirmedMarriage: false,
+            burnCertificate: 0
         });
 
-        // Create a Spouse struct for the proposee and set their engagement status.
-        spouses[_proposeeAddress] = Spouse({
-            spouseAddress: _proposeeAddress,
-            isEngaged: true, 
-            isMarried: false
-        });
+        engagements[msg.sender] = newEngagement;
+        engagements[_proposeeAddress] = newEngagement;
 
-        // Directly manipulate the storage structs for the engagement.
-        engagements[msg.sender].spouse1 = spouses[msg.sender]; // Proposer / msg.sender as spouse1
-        engagements[msg.sender].spouse2 = spouses[_proposeeAddress]; // Proposee as spouse2
-        engagements[msg.sender].weddingDate = _weddingDate; // Set the proposed wedding date
-        engagements[msg.sender].isRevoked = false;
-        engagements[msg.sender].spouse1ConfirmedMarriage = false;
-        engagements[msg.sender].spouse2ConfirmedMarriage = false;
-        engagements[msg.sender].burnCertificate = 0; // INitial state: no burn certificate issued.
-
-        // Point the proposee's engagement record to the proposer's.
-        engagements[_proposeeAddress] = engagements[msg.sender];
-
-        // Emit an event indicating that the engagement has been registered.
+        // Emit an event indicating the engagement registration.
         emit EngagementRegistered(msg.sender, _proposeeAddress, _weddingDate);
     }
+
 
 
 // PARTICIPATION (TASK 2)

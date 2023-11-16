@@ -1283,11 +1283,11 @@
 			]
 		},
 		"contracts/WeddingWithSC.sol": {
-			"keccak256": "0xaca6401cd47328a95b8aadadff2e84f37ca62c7d61e7a6d198eabdcc71adda28",
+			"keccak256": "0x27945991e0b1c65cffc6b9e8400bb6001726048640ea8724741bb0b18114b4a2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c08eadddc8f9b01a52bf23d3f5c80194d2b58738231a081ab49db5a319784183",
-				"dweb:/ipfs/QmNnjgApzYznytF7X7QhWySp6RompTb41bLWC3RfQ3dRtk"
+				"bzz-raw://93e5082429a518909abd1f38fb2c2d36b3e0a0821997225fe032939af9fe78c0",
+				"dweb:/ipfs/QmeqhGoY2AcVrL55WphZa1E42dD7KJzfveDRXyHcyz4ajS"
 			]
 		}
 	},
