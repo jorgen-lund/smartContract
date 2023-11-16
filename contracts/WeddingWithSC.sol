@@ -18,10 +18,11 @@ contract EngagementRegistry is ERC721Enumerable {
         uint8 burnCertificate;
     }
 
+    // Decided to just have address and bools in Spouse struct
+    // because we did not want to save anything other than their 
+    // address, as we see this as their ID. 
     struct Spouse {
         address spouseAddress;
-        uint256 id;
-        string name;
         bool isEngaged;
         bool isMarried;
     }
@@ -42,6 +43,7 @@ contract EngagementRegistry is ERC721Enumerable {
     event EngagementRevoked(address caller, uint256 revokedDate);
     event GuestListProposed(address spouse, address[] guests);
     event GuestListConfirmed(address spouse);
+    event MarriageProposed(address proposer);
     event MarriageConfirmed(address spouse1, address spouse2);
     event GuestVotedAgainst(address guest, address spouse);
     event WeddingInvalidated(address spouse);
@@ -60,7 +62,6 @@ contract EngagementRegistry is ERC721Enumerable {
         require(spouses[_spouseAddress].isEngaged == true, "Address not engaged.");
         _;
     }
-
 
     modifier isEngagedParty(address _spouseAddress) {
         Engagement memory engagement = engagements[_spouseAddress];
@@ -126,195 +127,265 @@ contract EngagementRegistry is ERC721Enumerable {
         _;
     }
 
-
-// FUNCTIONS
     constructor() ERC721("EngagementRegistry", "ENR"){
         // add an authorized account
         authorisedAccount = (0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C);
     }
 
-    //ENGAGEMENT (TASK 1)
 
-    function registerEngagement(
-        string memory _proposerName,
-        uint256 _proposerID, address _proposeeAddress, 
-        string memory _proposeeName, uint256 _proposeeID,
-        uint256 _weddingDate)
-        external notSameAddress(_proposeeAddress) notEngaged(_proposeeAddress){
-        // Ensure neither party is already engaged or married
 
-        // Update Spouse structs for both the proposer and the proposee
+//ENGAGEMENT (TASK 1)
+
+    // Registers an engagement between the caller (proposer) and the proposee.
+    // The function takes the address of the proposee and the proposed wedding date as parameters.
+    function registerEngagement(address _proposeeAddress, uint256 _weddingDate) external 
+        notSameAddress(_proposeeAddress)
+        notEngaged(_proposeeAddress)
+    {
+        // Create a Spouse struct for the proposer and set their engagement status.
         spouses[msg.sender] = Spouse({
-            spouseAddress: msg.sender,
-            id: _proposerID,
-            name: _proposerName,
+            spouseAddress: msg.sender, 
             isEngaged: true,
             isMarried: false
         });
 
+        // Create a Spouse struct for the proposee and set their engagement status.
         spouses[_proposeeAddress] = Spouse({
             spouseAddress: _proposeeAddress,
-            id: _proposeeID,
-            name: _proposeeName,
-            isEngaged: true,
+            isEngaged: true, 
             isMarried: false
         });
 
-        // Create the Engagement instance and store it in the contract's state
-        engagements[msg.sender] = Engagement({
-            spouse1: spouses[msg.sender],
-            spouse2: spouses[_proposeeAddress],
-            weddingDate: _weddingDate,
-            isRevoked: false,
-            spouse1ConfirmedMarriage: false,
-            spouse2ConfirmedMarriage: false,
-            burnCertificate: 0
-        });
+        // Directly manipulate the storage structs for the engagement.
+        engagements[msg.sender].spouse1 = spouses[msg.sender]; // Proposer / msg.sender as spouse1
+        engagements[msg.sender].spouse2 = spouses[_proposeeAddress]; // Proposee as spouse2
+        engagements[msg.sender].weddingDate = _weddingDate; // Set the proposed wedding date
+        engagements[msg.sender].isRevoked = false;
+        engagements[msg.sender].spouse1ConfirmedMarriage = false;
+        engagements[msg.sender].spouse2ConfirmedMarriage = false;
+        engagements[msg.sender].burnCertificate = 0; // INitial state: no burn certificate issued.
 
-        // Also map the engagement to the proposee's address
+        // Point the proposee's engagement record to the proposer's.
         engagements[_proposeeAddress] = engagements[msg.sender];
+
+        // Emit an event indicating that the engagement has been registered.
+        emit EngagementRegistered(msg.sender, _proposeeAddress, _weddingDate);
     }
 
 
-    // PARTICIPATION (TASK 2)
-    function proposeGuestList(address[] calldata _guests) external isEngaged(msg.sender) isEngagedParty(msg.sender) {
+// PARTICIPATION (TASK 2)
+
+    // Allows an engaged party to propose a guest list for their wedding.
+    function proposeGuestList(address[] calldata _guests) external isEngagedParty(msg.sender) isNotMarried(msg.sender){
+        // Retrieve the key to access the correct guest list.
         address guestListKey = getGuestListKey(msg.sender);
 
+        // Access the guest list using the key.
         GuestList storage guestList = guestLists[guestListKey];
 
+        // Set the proposed guests and reset confirmation flags.
         guestList.proposedGuests = _guests;
         guestList.spouse1Confirmed = false;
         guestList.spouse2Confirmed = false;
 
+        // Emit an event indicating a new guest list has been proposed.
         emit GuestListProposed(msg.sender, _guests);
     }
 
-
-    function confirmGuestList() external isEngaged(msg.sender) isEngagedParty(msg.sender) {
+    // Allows an engaged party to confirm the proposed guest list.
+    function confirmGuestList() external isEngagedParty(msg.sender) {
+        // Retrieve the key to access the correct guest list.
         address guestListKey = getGuestListKey(msg.sender);
 
+        // Access the guest list using the key.
         GuestList storage guestList = guestLists[guestListKey];
 
+        // Confirm the guest list based on who is calling the function.
         if (msg.sender == engagements[msg.sender].spouse1.spouseAddress) {
             guestList.spouse1Confirmed = true;
         } else {
             guestList.spouse2Confirmed = true;
         }
 
+        // Emit an event if both spouses have confirmed the guest list.
         if (guestList.spouse1Confirmed && guestList.spouse2Confirmed) {
             emit GuestListConfirmed(msg.sender);
         }
     }
 
-    function getGuestListKey(address _spouse) isEngaged(_spouse) internal view returns (address) {
+    // Internal function to get the key for accessing the guest list in the mapping.
+    // The key is the address of spouse1 in the engagement.
+    function getGuestListKey(address _spouse) isEngagedParty(_spouse) internal view returns (address) {
         Engagement memory engagement = engagements[_spouse];
         return engagement.spouse1.spouseAddress;
     }
 
-    function isGuestConfirmed(address _spouse, address _guest) isEngaged(_spouse) public view returns (bool) {
+
+    // Checks if a particular guest is confirmed for the wedding of a given spouse.
+    function isGuestConfirmed(address _spouse, address _guest) isEngagedParty(_spouse) public view returns (bool) {
+        // Retrieve the key to access the correct guest list.
         address guestListKey = getGuestListKey(_spouse);
+
+        // Access the guest list using the key.
         GuestList storage guestList = guestLists[guestListKey];
 
+        // Check if both spouses have confirmed the guest list.
         if (guestList.spouse1Confirmed && guestList.spouse2Confirmed) {
+            // Iterate through the proposed guests to find the guest in question.
             for (uint8 i = 0; i < guestList.proposedGuests.length; i++) {
                 if (guestList.proposedGuests[i] == _guest) {
-                    return true;
+                    return true; // Guest is confirmed.
                 }
             }
         }
-        return false;
+        return false; // Guest is not confirmed or the list is not yet confirmed by both.
     }
 
-    // REVOKE ENGAGEMENT (PART 3)
-    function revokeEngagement() external isEngaged(msg.sender) isNotRevoked(msg.sender) {
+
+// REVOKE ENGAGEMENT (PART 3)
+
+    // Allows an engaged party to revoke their engagement.
+    function revokeEngagement() external isEngagedParty(msg.sender) isNotRevoked(msg.sender) {
+        // Retrieve the engagement details.
         Engagement storage engagement = engagements[msg.sender];
 
+        // Delete the engagement records for both spouses.
         delete engagements[engagement.spouse1.spouseAddress];
         delete engagements[engagement.spouse2.spouseAddress];
+
+        // Update the engagement status in the Spouse structs.
         spouses[engagement.spouse1.spouseAddress].isEngaged = false;
         spouses[engagement.spouse2.spouseAddress].isEngaged = false;
 
+        // Emit an event indicating the engagement has been revoked.
         emit EngagementRevoked(msg.sender, block.timestamp);
     }
 
 
-    // MARRY (PART 4)
-    function marry() external 
-        isEngaged(msg.sender) 
+// MARRY (PART 4)
+
+    // Allows an engaged party to propose marriage.
+    function proposeMarriage() external 
+        isEngagedParty(msg.sender)
         isNotRevoked(msg.sender)
         isNotMarried(msg.sender)
     {
-        Engagement storage engagement = engagements[msg.sender];
+        // Retrieve the engagement details.
+        Engagement storage engagement = engagements[getPrimarySpouseAddress(msg.sender)];
 
-        // Confirm marriage for the caller
+        // Set the marriage confirmation status for the caller.
         if (msg.sender == engagement.spouse1.spouseAddress) {
             engagement.spouse1ConfirmedMarriage = true;
         } else if (msg.sender == engagement.spouse2.spouseAddress) {
             engagement.spouse2ConfirmedMarriage = true;
         }
 
-        // Check if both have confirmed the marriage
+        // Emit an event indicating that a marriage proposal has been made.
+        emit MarriageProposed(msg.sender);
+    }
+
+    // Allows the other engaged party to confirm the marriage proposal.
+    function confirmMarriage() external 
+        isEngagedParty(msg.sender)
+        isNotRevoked(msg.sender)
+        isNotMarried(msg.sender)
+    {
+        // Retrieve the engagement details.
+        Engagement storage engagement = engagements[getPrimarySpouseAddress(msg.sender)];
+
+        // Confirm the marriage based on who is calling the function.
+        if (msg.sender == engagement.spouse1.spouseAddress) {
+            require(!engagement.spouse1ConfirmedMarriage, "Already confirmed");
+            engagement.spouse1ConfirmedMarriage = true;
+        } else if (msg.sender == engagement.spouse2.spouseAddress) {
+            require(!engagement.spouse2ConfirmedMarriage, "Already confirmed");
+            engagement.spouse2ConfirmedMarriage = true;
+        }
+
+        // Finalize the marriage if both spouses have confirmed.
         if (engagement.spouse1ConfirmedMarriage && engagement.spouse2ConfirmedMarriage) {
-            // Update the married status in the Spouse structs
-            spouses[engagement.spouse1.spouseAddress].isMarried = true;
-            spouses[engagement.spouse2.spouseAddress].isMarried = true;
-
-            // Emit an event indicating the marriage is confirmed
-            emit MarriageConfirmed(engagement.spouse1.spouseAddress, engagement.spouse2.spouseAddress);
-
-            // Minting tokens representing the marriage (if applicable)
-            _safeMint(engagement.spouse1.spouseAddress, totalSupply() + 1);
-            _safeMint(engagement.spouse2.spouseAddress, totalSupply() + 1);
+            finalizeMarriage(engagement);
         }
     }
 
+    // Internal function to finalize the marriage process.
+    function finalizeMarriage(Engagement storage engagement) internal {
+        // Update the married status in the Spouse structs for both spouses.
+        spouses[engagement.spouse1.spouseAddress].isMarried = true;
+        spouses[engagement.spouse2.spouseAddress].isMarried = true;
 
-    // VOTING (PART 5)
-    function voteAgainstWedding(address _spouse) external 
-        isEngaged(_spouse) 
-        isNotRevoked(_spouse)
-        isNotMarried(_spouse)
-        isConfirmedGuest(_spouse)
-        hasNotVoted(_spouse)
-    {
-        GuestList storage guestList = guestLists[_spouse];
+        // Emit an event indicating the marriage is confirmed.
+        emit MarriageConfirmed(engagement.spouse1.spouseAddress, engagement.spouse2.spouseAddress);
 
-        guestList.hasVotedAgainst[msg.sender] = true;
-        guestList.votesAgainst++;
-        emit GuestVotedAgainst(msg.sender, _spouse);
+        // Minting tokens representing the marriage for both spouses.
+        _safeMint(engagement.spouse1.spouseAddress, totalSupply() + 1);
+        _safeMint(engagement.spouse2.spouseAddress, totalSupply() + 1);
+    }
 
-        _checkAndInvalidateWedding(_spouse);
+    // Utility function to always retrieve the primary spouse's address for consistent mapping access
+    function getPrimarySpouseAddress(address spouse) internal view returns (address) {
+        Engagement memory engagement = engagements[spouse];
+        return engagement.spouse1.spouseAddress;
     }
 
 
-    function _checkAndInvalidateWedding(address _spouse) internal 
-        isEngaged(_spouse)
+// VOTING (PART 5)
+
+    // Allows a confirmed guest to vote against the wedding of an engaged couple.
+    function voteAgainstWedding(address _spouse) external 
+        isEngagedParty(_spouse)
+        isNotRevoked(_spouse) 
         isNotMarried(_spouse)
+        isConfirmedGuest(_spouse) // Ensure the caller is a confirmed guest for the wedding.
+        hasNotVoted(_spouse) // Ensure the caller has not already voted.
     {
+        // Access the guest list for the specified spouse.
         GuestList storage guestList = guestLists[_spouse];
+
+        // Record the vote against the wedding.
+        guestList.hasVotedAgainst[msg.sender] = true;
+        guestList.votesAgainst++;
+
+        // Emit an event indicating that a guest has voted against the wedding.
+        emit GuestVotedAgainst(msg.sender, _spouse);
+
+        // Check if the wedding should be invalidated based on the votes.
+        _checkAndInvalidateWedding(_spouse);
+    }
+
+    // Internal function to check if the wedding should be invalidated based on votes.
+    function _checkAndInvalidateWedding(address _spouse) internal 
+        isEngagedParty(_spouse)
+        isNotMarried(_spouse) 
+    {
+        // Access the guest list for the specified spouse.
+        GuestList storage guestList = guestLists[_spouse];
+        // Retrieve the engagement details.
         Engagement storage engagement = engagements[_spouse];
 
+        // Calculate the number of votes required to invalidate the wedding.
         uint256 confirmedGuestCount = guestList.proposedGuests.length;
         uint256 requiredVotesToInvalidate = (confirmedGuestCount + 1) / 2;
 
+        // Check if the number of votes against the wedding meets or exceeds the required threshold.
         if (guestList.votesAgainst >= requiredVotesToInvalidate) {
+            // Invalidate the engagement and update the status for both spouses.
             engagement.isRevoked = true;
-
             spouses[engagement.spouse1.spouseAddress].isEngaged = false;
             spouses[engagement.spouse2.spouseAddress].isEngaged = false;
 
+            // Emit events indicating the wedding has been invalidated.
             emit WeddingInvalidated(engagement.spouse1.spouseAddress);
             emit WeddingInvalidated(engagement.spouse2.spouseAddress);
         }
     }
 
 
-    // GETTERS FOR DEBUG
+// GETTERS FOR DEBUG
     function getGuestList(address _spouse) external view returns (address[] memory) {
         address guestListKey = getGuestListKey(_spouse);
         return guestLists[guestListKey].proposedGuests;
     }
-
 
     function getEngagementInfo(address _spouse) external view returns (address, address, uint256, bool, bool) {
         Engagement memory engagement = engagements[_spouse];
@@ -325,6 +396,11 @@ contract EngagementRegistry is ERC721Enumerable {
             engagement.isRevoked,
             engagement.spouse1.isEngaged && engagement.spouse2.isEngaged
         );
+    }
+
+    function getCurrentTime() external view returns (uint256){
+        uint256 currentTime = block.timestamp;
+        return currentTime;
     }
 
 
