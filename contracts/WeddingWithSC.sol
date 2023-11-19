@@ -16,6 +16,8 @@ contract EngagementRegistry is ERC721Enumerable {
         bool spouse1ConfirmedMarriage;
         bool spouse2ConfirmedMarriage;
         uint8 burnCertificate;
+        uint256 votingPeriodStart;
+        bool isVotingPeriod;
     }
 
     // Decided to just have address and bools in Spouse struct
@@ -64,7 +66,7 @@ contract EngagementRegistry is ERC721Enumerable {
     }
 
     modifier isEngagedParty(address _spouseAddress) {
-        Engagement memory engagement = engagements[_spouseAddress];
+        Engagement memory engagement = engagements[getPrimarySpouseAddress(_spouseAddress)];
         require(
             msg.sender == spouses[engagement.spouse1.spouseAddress].spouseAddress || 
             msg.sender == spouses[engagement.spouse2.spouseAddress].spouseAddress,
@@ -79,7 +81,7 @@ contract EngagementRegistry is ERC721Enumerable {
     }
     
     modifier isNotRevoked(address _spouse) {
-        require(engagements[_spouse].isRevoked == false, "The engagement is already revoked.");
+        require(engagements[getPrimarySpouseAddress(_spouse)].isRevoked == false, "The engagement is already revoked.");
         _;
     }
 
@@ -98,6 +100,13 @@ contract EngagementRegistry is ERC721Enumerable {
         _;
     }
 
+    modifier isGuestListConfirmed(address _spouse) {
+        address guestListKey = getGuestListKey(_spouse);
+        GuestList storage guestList = guestLists[guestListKey];
+        require(guestList.spouse1Confirmed && guestList.spouse2Confirmed, "Guest list must be confirmed by both spouses first");
+        _;
+    }
+
     // TODO: Modifiers for date, musst be fixed as solidity is weird.
     modifier futureDate(uint256 _date) {
         require(_date > block.timestamp, "Date must be in the future");
@@ -105,25 +114,31 @@ contract EngagementRegistry is ERC721Enumerable {
     }
 
     modifier isBeforeWeddingDate(address _spouse) {
-        Engagement memory engagement = engagements[_spouse];
+        Engagement memory engagement = engagements[getPrimarySpouseAddress(_spouse)];
         require(block.timestamp < engagement.weddingDate - 1 days, "The wedding date is already here");
         _;
     }
 
-    modifier isVotingPeriod(address _spouse) {
-        Engagement memory engagement = engagements[_spouse];
-        require(block.timestamp >= engagement.weddingDate - 1 days, "Voting not yet open");
-        require(block.timestamp < engagement.weddingDate, "Voting closed");
-        _;
-    }
-
     modifier weddingDateHasArrived(address _spouse) {
-        require(block.timestamp >= engagements[_spouse].weddingDate, "Wedding date not yet arrived");
+        require(block.timestamp >= engagements[getPrimarySpouseAddress(_spouse)].weddingDate, "Wedding date not yet arrived");
         _;
     }
 
     modifier weddingDateHasNotPassed(address _spouse) {
-        require(block.timestamp < engagements[_spouse].weddingDate + 1 days, "Wedding date passed");
+        require(block.timestamp < engagements[getPrimarySpouseAddress(_spouse)].weddingDate + 1 days, "Wedding date passed");
+        _;
+    }
+
+    modifier withinVotingPeriod(address _spouse) {
+        Engagement memory engagement = engagements[getPrimarySpouseAddress(_spouse)];
+        require(engagement.isVotingPeriod && (block.timestamp <= engagement.votingPeriodStart + 60 seconds), "Voting period is not active");
+        _;
+    }
+
+    modifier canConfirmMarriage(address _spouse) {
+        Engagement memory engagement = engagements[getPrimarySpouseAddress(_spouse)];
+        require(!engagement.isRevoked, "Marriage revoked due to voting");
+        require(engagement.isVotingPeriod == false, "Guests can still vote against the wedding");
         _;
     }
 
@@ -152,7 +167,9 @@ contract EngagementRegistry is ERC721Enumerable {
             isRevoked: false,
             spouse1ConfirmedMarriage: false,
             spouse2ConfirmedMarriage: false,
-            burnCertificate: 0
+            burnCertificate: 0,
+            votingPeriodStart: 0,
+            isVotingPeriod: false
         });
 
         engagements[msg.sender] = newEngagement;
@@ -167,7 +184,7 @@ contract EngagementRegistry is ERC721Enumerable {
 // PARTICIPATION (TASK 2)
 
     // Allows an engaged party to propose a guest list for their wedding.
-    function proposeGuestList(address[] calldata _guests) external isEngagedParty(msg.sender) isNotMarried(msg.sender){
+    function proposeGuestList(address[] calldata _guests) public isEngagedParty(msg.sender) isNotMarried(msg.sender){
         // Retrieve the key to access the correct guest list.
         address guestListKey = getGuestListKey(msg.sender);
 
@@ -184,7 +201,7 @@ contract EngagementRegistry is ERC721Enumerable {
     }
 
     // Allows an engaged party to confirm the proposed guest list.
-    function confirmGuestList() external isEngagedParty(msg.sender) {
+    function confirmGuestList() public isEngagedParty(msg.sender) {
         // Retrieve the key to access the correct guest list.
         address guestListKey = getGuestListKey(msg.sender);
 
@@ -213,7 +230,7 @@ contract EngagementRegistry is ERC721Enumerable {
 
 
     // Checks if a particular guest is confirmed for the wedding of a given spouse.
-    function isGuestConfirmed(address _spouse, address _guest) public view returns (bool) {
+    function isGuestConfirmed(address _spouse, address _guest) internal view returns (bool) {
         // Retrieve the key to access the correct guest list.
         address guestListKey = getGuestListKey(_spouse);
 
@@ -236,7 +253,7 @@ contract EngagementRegistry is ERC721Enumerable {
 // REVOKE ENGAGEMENT (PART 3)
 
     // Allows an engaged party to revoke their engagement.
-    function revokeEngagement() external isNotRevoked(msg.sender) {
+    function revokeEngagement() public isNotRevoked(msg.sender) isEngagedParty(msg.sender) {
         // Retrieve the engagement details.
         Engagement storage engagement = engagements[msg.sender];
 
@@ -256,10 +273,11 @@ contract EngagementRegistry is ERC721Enumerable {
 // MARRY (PART 4)
 
     // Allows an engaged party to propose marriage.
-    function proposeMarriage() external 
+    function proposeMarriage() public 
         isEngagedParty(msg.sender)
         isNotRevoked(msg.sender)
         isNotMarried(msg.sender)
+        isGuestListConfirmed(msg.sender)
     {
         // Retrieve the engagement details.
         Engagement storage engagement = engagements[getPrimarySpouseAddress(msg.sender)];
@@ -272,14 +290,15 @@ contract EngagementRegistry is ERC721Enumerable {
         }
 
         // Emit an event indicating that a marriage proposal has been made.
+        startVotingPeriod(msg.sender);
         emit MarriageProposed(msg.sender);
     }
 
     // Allows the other engaged party to confirm the marriage proposal.
-    function confirmMarriage() external 
+    function confirmMarriage() public 
         isEngagedParty(msg.sender)
-        isNotRevoked(msg.sender)
         isNotMarried(msg.sender)
+        canConfirmMarriage(msg.sender)
     {
         // Retrieve the engagement details.
         Engagement storage engagement = engagements[getPrimarySpouseAddress(msg.sender)];
@@ -322,13 +341,22 @@ contract EngagementRegistry is ERC721Enumerable {
 
 // VOTING (PART 5)
 
+    // // Function to start the voting period
+    function startVotingPeriod(address _spouse) internal isEngagedParty(_spouse) {
+        Engagement storage engagement = engagements[getPrimarySpouseAddress(_spouse)];
+        // start at current time, modifier ensures 60 second must have passed before spouse can confirm marriage. 
+        engagement.votingPeriodStart = block.timestamp;
+        engagement.isVotingPeriod = true;
+    }
+
     // Allows a confirmed guest to vote against the wedding of an engaged couple.
-    function voteAgainstWedding(address _spouse) external 
+    function voteAgainstWedding(address _spouse) public 
         isNotRevoked(_spouse) 
         isNotMarried(_spouse)
         isEngaged(_spouse)
         isConfirmedGuest(_spouse) // Ensure the caller is a confirmed guest for the wedding.
         hasNotVoted(_spouse) // Ensure the caller has not already voted.
+        withinVotingPeriod(_spouse) // Ensure votingPeriod has begun.
     {
         address guestListKey = getGuestListKey(_spouse);
 
@@ -353,7 +381,7 @@ contract EngagementRegistry is ERC721Enumerable {
         GuestList storage guestList = guestLists[guestListKey];
 
         // Retrieve the engagement details.
-        Engagement storage engagement = engagements[_spouse];
+        Engagement storage engagement = engagements[getPrimarySpouseAddress(_spouse)];
 
         // Calculate the number of votes required to invalidate the wedding.
         uint256 confirmedGuestCount = guestList.proposedGuests.length;
@@ -374,7 +402,7 @@ contract EngagementRegistry is ERC721Enumerable {
 
 
 // GETTERS FOR DEBUG
-    function getCurrentTime() external view returns (uint256){
+    function getCurrentTime() public view returns (uint256){
         uint256 currentTime = block.timestamp;
         return currentTime;
     }

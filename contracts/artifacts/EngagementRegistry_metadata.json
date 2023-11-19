@@ -517,6 +517,16 @@
 						"internalType": "uint8",
 						"name": "burnCertificate",
 						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "votingPeriodStart",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isVotingPeriod",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -597,30 +607,6 @@
 					}
 				],
 				"name": "isApprovedForAll",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_spouse",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_guest",
-						"type": "address"
-					}
-				],
-				"name": "isGuestConfirmed",
 				"outputs": [
 					{
 						"internalType": "bool",
@@ -1115,7 +1101,7 @@
 		},
 		"optimizer": {
 			"enabled": true,
-			"runs": 0
+			"runs": 100
 		},
 		"remappings": []
 	},
@@ -1225,11 +1211,11 @@
 			]
 		},
 		"contracts/WeddingWithSC.sol": {
-			"keccak256": "0x030c56cb2ffa781bcb745ebf96860a71c146dd9761156181b34adc9e0c4eaae6",
+			"keccak256": "0x07b7715fe8ea88c1b0a9be6368dc7d23029521c01b5cc6de51466e7e1e6225c6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://34f9813f05965336aa1cc92c6fe2f4acc70388f5d0ceb62b1b7af5f18c7c2644",
-				"dweb:/ipfs/QmTehRpZXZS9pAoGXPcM9BkNfGqXf3BFZkWydsFgHpY8zt"
+				"bzz-raw://47354d29f42a15e076942fc3a4cfce7d8ea4d30ce588392c0d8b1f4ff2793e62",
+				"dweb:/ipfs/QmTfpgbBwxA1nW5CBiNx47ASvtg1cVNUcRge2ZZEgzvmAu"
 			]
 		}
 	},
